@@ -1,12 +1,10 @@
+require("dotenv").config()
 const nodemailer = require("nodemailer");
 const userList = require('../model/model');
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 const secretKey = process.env.SECRET_KEY;
 const Qrcode = require("qrcode");
-const dotenv = require("dotenv").config()
-
-console.log(secretKey)
 
 
 transporter = nodemailer.createTransport({

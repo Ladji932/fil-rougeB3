@@ -1,6 +1,7 @@
 require("dotenv").config()
 const nodemailer = require("nodemailer");
 const userList = require('../model/model');
+const EventList = require('../model/eventList');
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 const secretKey = process.env.SECRET_KEY;
@@ -35,6 +36,33 @@ module.exports.showQrCode = async (req,res) => {
         res.status(500).send("Erreur lors de la génération du QR code.");
     }
 }
+
+
+module.exports.Login = async (req,res) =>{
+    const { email, password } = req.body;
+    try {
+        const findUser = await userList.findOne({ email });
+        if (!findUser) {
+            console.log("User not found");
+            return res.status(404).json({ message: "Utilisateur non trouvé" });
+        }
+
+        const PasswordValidator = await bcrypt.compare(password, findUser.password);
+        if (!PasswordValidator) {
+            return res.status(401).json({ message: "Mot de passe incorrect" });
+        }
+
+        const token = jwt.sign({ mail: findUser.email }, secretKey, { expiresIn: '1h' });
+        console.log(token)
+        return res.status(200).json({ token, userId: findUser._id });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Erreur serveur" });
+    }
+
+}
+
+
 
 module.exports.Signup = async (req,res) => {
     const { login, mail, password , phone} = req.body;
@@ -99,27 +127,28 @@ module.exports.Signup = async (req,res) => {
 
 }
 
-module.exports.Login = async (req,res) =>{
-    const { email, password } = req.body;
+module.exports.DeleteUser = async (req, res) => {
+    const {_id} = req.params; 
+    console.log(_id)
+    console.log(EventList)
+
+
     try {
-        const findUser = await userList.findOne({ email });
-        if (!findUser) {
-            console.log("User not found");
-            return res.status(404).json({ message: "Utilisateur non trouvé" });
+        const user = await EventList.findByIdAndDelete(_id);  
+        
+        if (!user) {
+            console.log("évenements non trouvé");
+            return res.status(404).json({ message: "évenements non trouvé" });
         }
 
-        const PasswordValidator = await bcrypt.compare(password, findUser.password);
-        if (!PasswordValidator) {
-            return res.status(401).json({ message: "Mot de passe incorrect" });
-        }
-
-        const token = jwt.sign({ mail: findUser.email }, secretKey, { expiresIn: '1h' });
-        console.log(token)
-        return res.status(200).json({ token, userId: findUser._id });
+        await EventList.deleteOne({ _id: _id });
+        console.log(`Utilisateur avec l'ID ${_id} supprimé`);
+        
+        return res.status(200).json({ message: "Utilisateur supprimé avec succès" });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: "Erreur serveur" });
     }
+};
 
-}
 

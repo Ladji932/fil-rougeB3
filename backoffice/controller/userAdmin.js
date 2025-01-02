@@ -15,7 +15,6 @@ module.exports.checkAdmin = (req, res, next) => {
   next();
 };
 
-// Config Multer pour utiliser la mémoire au lieu du stockage sur disque
 const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
@@ -38,12 +37,10 @@ const upload = multer({
 const CreateEvents = async (req, res) => {
   const { title, description, category, location, contactInfo, createdBy , dateEvent , dateCreated} = req.body;
 
-  // Gestion d'erreur pour les champs obligatoires
   if (!title || !description || !category || !dateEvent || !location || !dateCreated) {
     return res.status(400).json({ message: "Tous les champs obligatoires doivent être remplis." });
   }
 
-  // Parsing sécurisé de contactInfo
   let parsedContactInfo;
   try {
     parsedContactInfo = contactInfo ? JSON.parse(contactInfo) : undefined;
@@ -53,7 +50,6 @@ const CreateEvents = async (req, res) => {
     });
   }
 
-  // Vérification de l'image téléchargée
   if (!req.file) {
     return res.status(400).json({ message: "Veuillez télécharger une image pour l'événement." });
   }

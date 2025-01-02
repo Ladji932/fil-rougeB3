@@ -16,7 +16,8 @@ const UserSchema = new Schema({
   phoneNumber: {
     type: Number,
     match: /^[0-9]+$/, 
-}
+},
+role: { type: String, enum: ['user', 'admin'], default: 'user' }
 
 });
 

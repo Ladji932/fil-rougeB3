@@ -2,9 +2,11 @@ const express = require('express');
 const helmet = require('helmet');
 const mongoose = require('mongoose');
 const route = require('./routes/routes');
+const cors = require('cors');
+
 
 const app = express();
-const PORT = 3000;
+const PORT = 3002;
 app.use(helmet());
 
 mongoose.connect('mongodb://localhost:27017/fil-rouge')
@@ -12,6 +14,8 @@ mongoose.connect('mongodb://localhost:27017/fil-rouge')
 .catch(err => console.log("MongoDB connection error:", err));
 
 app.use(express.json());
+app.use(cors());
+
 
 app.use('/api', route); 
 

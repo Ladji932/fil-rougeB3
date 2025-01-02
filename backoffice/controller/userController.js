@@ -74,7 +74,7 @@ module.exports.Signup = async (req,res) => {
                 html: `
                     <h1>Bienvenue ${newUser.username}!</h1>
                     <p>Merci de vous être inscrit. Voici un lien vers votre QR code :</p>
-                    <p><a href="http://localhost:3000/api/qrcode/${newUser.username}/${newUser.email}">Cliquez ici pour voir votre QR code</a></p>
+                    <p><a href="http://localhost:3002/api/qrcode/${newUser.username}/${newUser.email}">Cliquez ici pour voir votre QR code</a></p>
                     <p>À bientôt!</p>
                 `,
             };
@@ -114,6 +114,7 @@ module.exports.Login = async (req,res) =>{
         }
 
         const token = jwt.sign({ mail: findUser.email }, secretKey, { expiresIn: '1h' });
+        console.log(token)
         return res.status(200).json({ token, userId: findUser._id });
     } catch (error) {
         console.error(error);
@@ -121,3 +122,4 @@ module.exports.Login = async (req,res) =>{
     }
 
 }
+
